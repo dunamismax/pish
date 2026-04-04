@@ -1,0 +1,19 @@
+FROM oven/bun:1 AS base
+WORKDIR /app
+
+# Install dependencies
+COPY package.json bun.lock ./
+COPY apps/web/package.json apps/web/
+COPY apps/api/package.json apps/api/
+COPY apps/worker/package.json apps/worker/
+COPY packages/contracts/package.json packages/contracts/
+COPY packages/email/package.json packages/email/
+RUN bun install --frozen-lockfile
+
+# Copy source
+COPY tsconfig.base.json biome.json ./
+COPY packages/ packages/
+COPY apps/api/ apps/api/
+
+EXPOSE 3001
+CMD ["bun", "run", "--cwd", "apps/api", "src/index.ts"]

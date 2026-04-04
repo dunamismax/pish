@@ -1,0 +1,37 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+	title: string;
+	description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+	<div class="flex min-h-screen">
+		<aside class="hidden w-64 border-r border-[var(--color-border)] bg-[var(--color-bg-alt)] md:block">
+			<div class="p-6">
+				<a href="/app" class="text-xl font-bold text-[var(--color-primary-600)]">Pish</a>
+			</div>
+			<nav class="flex flex-col gap-1 px-3">
+				<a href="/app/dashboard" class="rounded-lg px-3 py-2 text-sm hover:bg-[var(--color-border)]">Dashboard</a>
+				<a href="/app/map" class="rounded-lg px-3 py-2 text-sm hover:bg-[var(--color-border)]">Map</a>
+				<a href="/app/field-guide" class="rounded-lg px-3 py-2 text-sm hover:bg-[var(--color-border)]">Field Guide</a>
+				<a href="/app/feed" class="rounded-lg px-3 py-2 text-sm hover:bg-[var(--color-border)]">Feed</a>
+				<a href="/app/profile" class="rounded-lg px-3 py-2 text-sm hover:bg-[var(--color-border)]">Profile</a>
+			</nav>
+		</aside>
+		<div class="flex flex-1 flex-col">
+			<header class="border-b border-[var(--color-border)] px-6 py-4">
+				<div class="flex items-center justify-between">
+					<h1 class="text-lg font-semibold">{title}</h1>
+				</div>
+			</header>
+			<main class="flex-1 p-6">
+				<slot />
+			</main>
+		</div>
+	</div>
+</BaseLayout>

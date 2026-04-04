@@ -8,12 +8,12 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 
 ## Current repo truth
 
-- [ ] The repo is a Bun workspace monorepo.
-- [ ] Astro owns the page shells and routing model.
-- [ ] Elysia serves the API surface under `/api`.
-- [ ] PostgreSQL, PostGIS, Valkey, MeiliSearch, and Caddy are wired through `compose.yaml`.
-- [ ] Shared Zod contracts live in `packages/contracts`.
-- [ ] The local developer entrypoint is `bun run dev`.
+- [x] The repo is a Bun workspace monorepo.
+- [x] Astro owns the page shells and routing model.
+- [x] Elysia serves the API surface under `/api`.
+- [x] PostgreSQL, PostGIS, Valkey, MeiliSearch, and Caddy are wired through `compose.yaml`.
+- [x] Shared Zod contracts live in `packages/contracts`.
+- [x] The local developer entrypoint is `bun run dev`.
 - [ ] Auth, sessions, and protected routes are implemented.
 - [ ] Species taxonomy and eBird data sync are implemented.
 - [ ] Sighting reports and crowd-confirmed alert dispatch are implemented.
@@ -74,7 +74,7 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 
 ## Phase status summary
 
-- [ ] Phase 0 - Product framing and repo bootstrap.
+- [x] Phase 0 - Product framing and repo bootstrap.
 - [ ] Phase 1 - Database foundation, auth, and species data.
 - [ ] Phase 2 - Sighting reports, confirmation system, and alert dispatch.
 - [ ] Phase 3 - Map, field guide, and core navigation.
@@ -93,42 +93,42 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 
 ### Objectives
 
-- [ ] Create the Bun workspace and target repo structure.
-- [ ] Stand up the full local development environment.
-- [ ] Prove that all services boot and talk to each other before feature work begins.
+- [x] Create the Bun workspace and target repo structure.
+- [x] Stand up the full local development environment.
+- [x] Prove that all services boot and talk to each other before feature work begins.
 
 ### Checklist
 
-- [ ] Add repo-root Bun workspace configuration with `apps/web`, `apps/api`, `apps/worker`, `packages/contracts`, `packages/email`.
-- [ ] Add `apps/web` Astro + Vue scaffolding with Tailwind CSS v4, design tokens in `tokens.css`, and @vueuse/motion.
-- [ ] Add `apps/api` Elysia service scaffolding with health and readiness endpoints.
-- [ ] Add `apps/worker` BullMQ worker scaffolding.
-- [ ] Add `packages/contracts` with initial shared Zod schemas.
-- [ ] Add `packages/email` with Vue email template scaffolding for Resend.
-- [ ] Add `db/migrations/` directory and SQL migration runner.
-- [ ] Add `compose.yaml` for `caddy`, `web`, `api`, `worker`, `postgres` (with PostGIS), `valkey`, and `meilisearch`.
-- [ ] Add `Caddyfile` for local reverse proxying of web, API, and WebSocket services.
-- [ ] Add `.env.example` with all service connection strings and API keys.
-- [ ] Add `biome.json` for lint and format configuration.
-- [ ] Add `tsconfig.base.json` and per-package TypeScript configs.
-- [ ] Add root workspace scripts: `dev`, `test`, `typecheck`, `lint`, `build`, and `verify`.
-- [ ] Add `README.md` with local setup instructions and repo purpose.
-- [ ] Add Playwright configuration for E2E smoke coverage.
+- [x] Add repo-root Bun workspace configuration with `apps/web`, `apps/api`, `apps/worker`, `packages/contracts`, `packages/email`.
+- [x] Add `apps/web` Astro + Vue scaffolding with Tailwind CSS v4, design tokens in `tokens.css`, and @vueuse/motion.
+- [x] Add `apps/api` Elysia service scaffolding with health and readiness endpoints.
+- [x] Add `apps/worker` BullMQ worker scaffolding.
+- [x] Add `packages/contracts` with initial shared Zod schemas.
+- [x] Add `packages/email` with Vue email template scaffolding for Resend.
+- [x] Add `db/migrations/` directory and SQL migration runner.
+- [x] Add `compose.yaml` for `caddy`, `web`, `api`, `worker`, `postgres` (with PostGIS), `valkey`, and `meilisearch`.
+- [x] Add `Caddyfile` for local reverse proxying of web, API, and WebSocket services.
+- [x] Add `.env.example` with all service connection strings and API keys.
+- [x] Add `biome.json` for lint and format configuration.
+- [x] Add `tsconfig.base.json` and per-package TypeScript configs.
+- [x] Add root workspace scripts: `dev`, `test`, `typecheck`, `lint`, `build`, and `verify`.
+- [x] Add `README.md` with local setup instructions and repo purpose.
+- [x] Add Playwright configuration for E2E smoke coverage.
 
 ### Exit criteria
 
-- [ ] A fresh clone can `bun install`, start all services, and hit health endpoints.
-- [ ] The repo has one obvious developer entrypoint (`bun run dev`).
-- [ ] The workspace structure matches the intended long-term shape.
-- [ ] The web shell loads through Caddy instead of bypassing the intended runtime shape.
+- [x] A fresh clone can `bun install`, start all services, and hit health endpoints.
+- [x] The repo has one obvious developer entrypoint (`bun run dev`).
+- [x] The workspace structure matches the intended long-term shape.
+- [x] The web shell loads through Caddy instead of bypassing the intended runtime shape.
 
 ### Verification
 
-- [ ] `bun install`
-- [ ] `bun run typecheck`
-- [ ] `bun run lint`
-- [ ] `bun run build`
-- [ ] `bun run verify`
+- [x] `bun install`
+- [x] `bun run typecheck`
+- [x] `bun run lint`
+- [x] `bun run build`
+- [x] `bun run verify`
 - [ ] `docker compose up -d --build` with all services healthy.
 
 ## Phase 1 - Database foundation, auth, and species data

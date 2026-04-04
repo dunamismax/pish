@@ -1,0 +1,20 @@
+{
+	"name": "@pish/worker",
+	"version": "0.0.1",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "bun run --watch src/index.ts",
+		"build": "tsc --noEmit",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@pish/contracts": "workspace:*",
+		"bullmq": "^5.30",
+		"ioredis": "^5.4"
+	},
+	"devDependencies": {
+		"bun-types": "latest",
+		"typescript": "^5.7"
+	}
+}
