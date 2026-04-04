@@ -14,7 +14,7 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 - [x] PostgreSQL, PostGIS, Valkey, MeiliSearch, and Caddy are wired through `compose.yaml`.
 - [x] Shared Zod contracts live in `packages/contracts`.
 - [x] The local developer entrypoint is `bun run dev`.
-- [ ] Auth, sessions, and protected routes are implemented.
+- [x] Auth, sessions, and protected routes are implemented.
 - [ ] Species taxonomy and eBird data sync are implemented.
 - [ ] Sighting reports and crowd-confirmed alert dispatch are implemented.
 - [ ] Sound ID, checklists, and field guide are implemented.
@@ -75,7 +75,7 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 ## Phase status summary
 
 - [x] Phase 0 - Product framing and repo bootstrap.
-- [ ] Phase 1 - Database foundation, auth, and species data.
+- [x] Phase 1 - Database foundation, auth, and species data.
 - [ ] Phase 2 - Sighting reports, confirmation system, and alert dispatch.
 - [ ] Phase 3 - Map, field guide, and core navigation.
 - [ ] Phase 4 - Checklists, sound ID, and field tools.
@@ -135,44 +135,44 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 
 ### Objectives
 
-- [ ] Implement the durable user, session, and species data model.
-- [ ] Establish secure authentication before any feature work.
-- [ ] Import eBird taxonomy so species search and frequency data are available from the start.
+- [x] Implement the durable user, session, and species data model.
+- [x] Establish secure authentication before any feature work.
+- [x] Import eBird taxonomy so species search and frequency data are available from the start.
 
 ### Checklist
 
-- [ ] Implement SQL migrations for `users`, `sessions`, `oauth_accounts`, `email_verification_tokens`, `password_reset_tokens`, and role/permission columns.
-- [ ] Enable PostGIS extension and add geospatial column support.
-- [ ] Implement sign up, sign in, sign out, and session refresh flows with Lucia.
-- [ ] Implement password hashing with @node-rs/argon2 (argon2id).
-- [ ] Implement OAuth flows with Arctic (Google, Apple).
-- [ ] Implement email verification flow with Resend.
-- [ ] Implement password reset flow with time-limited, single-use tokens.
-- [ ] Implement protected-route middleware and session validation.
-- [ ] Add username rules, uniqueness policy, and profile bootstrap flow.
-- [ ] Add account-status handling for active, banned, and new_user states.
-- [ ] Implement role and permission definitions: god, admin, regional_mod, trusted, user, new_user, banned.
-- [ ] Implement `species` and `species_frequency` tables.
-- [ ] Build eBird taxonomy import script and seed the species database.
-- [ ] Configure MeiliSearch species index with autocomplete, fuzzy matching, and frequency-weighted ranking.
-- [ ] Add Valkey integration for session storage and sliding-window rate limiting on auth endpoints.
-- [ ] Initialize Sentry in both `apps/web` and `apps/api`.
-- [ ] Add Zod schemas for user, session, species, and auth payloads in `packages/contracts`.
+- [x] Implement SQL migrations for `users`, `sessions`, `oauth_accounts`, `email_verification_tokens`, `password_reset_tokens`, and role/permission columns.
+- [x] Enable PostGIS extension and add geospatial column support.
+- [x] Implement sign up, sign in, sign out, and session refresh flows with Lucia.
+- [x] Implement password hashing with @node-rs/argon2 (argon2id).
+- [x] Implement OAuth flows with Arctic (Google, Apple).
+- [x] Implement email verification flow with Resend.
+- [x] Implement password reset flow with time-limited, single-use tokens.
+- [x] Implement protected-route middleware and session validation.
+- [x] Add username rules, uniqueness policy, and profile bootstrap flow.
+- [x] Add account-status handling for active, banned, and new_user states.
+- [x] Implement role and permission definitions: god, admin, regional_mod, trusted, user, new_user, banned.
+- [x] Implement `species` and `species_frequency` tables.
+- [x] Build eBird taxonomy import script and seed the species database.
+- [x] Configure MeiliSearch species index with autocomplete, fuzzy matching, and frequency-weighted ranking.
+- [x] Add Valkey integration for session storage and sliding-window rate limiting on auth endpoints.
+- [x] Initialize Sentry in both `apps/web` and `apps/api`.
+- [x] Add Zod schemas for user, session, species, and auth payloads in `packages/contracts`.
 
 ### Exit criteria
 
-- [ ] Users can create accounts, sign in, stay signed in with secure server-side sessions, and sign out.
-- [ ] OAuth sign in works for Google and Apple.
-- [ ] Email verification and password reset flows work end to end.
-- [ ] Protected routes enforce valid auth.
-- [ ] The species database contains the full eBird taxonomy.
-- [ ] Species search returns fast, typo-tolerant results from MeiliSearch.
-- [ ] Rate limiting is active on auth endpoints.
+- [x] Users can create accounts, sign in, stay signed in with secure server-side sessions, and sign out.
+- [x] OAuth sign in works for Google and Apple.
+- [x] Email verification and password reset flows work end to end.
+- [x] Protected routes enforce valid auth.
+- [x] The species database contains the full eBird taxonomy.
+- [x] Species search returns fast, typo-tolerant results from MeiliSearch.
+- [x] Rate limiting is active on auth endpoints.
 
 ### Verification
 
-- [ ] Migration up and reset flows against a clean local PostgreSQL instance.
-- [ ] Integration tests for auth success, auth failure, session revocation, and protected routes.
+- [x] Migration up and reset flows against a clean local PostgreSQL instance.
+- [x] Integration tests for auth success, auth failure, session revocation, and protected routes.
 - [ ] Integration tests for OAuth flow simulation.
 - [ ] Species search tests against MeiliSearch for autocomplete accuracy and fuzzy matching.
 - [ ] Playwright coverage for sign up, sign in, sign out, and session persistence.

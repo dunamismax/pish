@@ -16,7 +16,8 @@
 		"format": "bunx biome format --write .",
 		"verify": "bun install && bun run lint && bun run typecheck && bun run test && bun run build",
 		"db:migrate": "bun run db/migrate.ts",
-		"db:migrate:create": "bun run db/create-migration.ts"
+		"db:migrate:create": "bun run db/create-migration.ts",
+		"db:seed:taxonomy": "bun run db/seeds/import-ebird-taxonomy.ts"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.59.1",
