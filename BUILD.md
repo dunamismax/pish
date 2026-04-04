@@ -16,7 +16,7 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 - [x] The local developer entrypoint is `bun run dev`.
 - [x] Auth, sessions, and protected routes are implemented.
 - [ ] Species taxonomy and eBird data sync are implemented.
-- [ ] Sighting reports and crowd-confirmed alert dispatch are implemented.
+- [x] Sighting reports and crowd-confirmed alert dispatch are implemented.
 - [ ] Sound ID, checklists, and field guide are implemented.
 - [ ] Social features (groups, events, chat, feed) are implemented.
 - [ ] Challenges, badges, leaderboards, and stats dashboard are implemented.
@@ -76,7 +76,7 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 
 - [x] Phase 0 - Product framing and repo bootstrap.
 - [x] Phase 1 - Database foundation, auth, and species data.
-- [ ] Phase 2 - Sighting reports, confirmation system, and alert dispatch.
+- [x] Phase 2 - Sighting reports, confirmation system, and alert dispatch.
 - [ ] Phase 3 - Map, field guide, and core navigation.
 - [ ] Phase 4 - Checklists, sound ID, and field tools.
 - [ ] Phase 5 - Social feed, groups, events, and chat.
@@ -182,36 +182,36 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 
 ### Objectives
 
-- [ ] Build the core sighting report flow optimized for speed (under 10 seconds for a practiced user).
-- [ ] Implement crowd-confirmed alert dispatch with trust-weighted confirmation thresholds.
-- [ ] Make the alert system trustworthy enough that serious birders rely on it.
+- [x] Build the core sighting report flow optimized for speed (under 10 seconds for a practiced user).
+- [x] Implement crowd-confirmed alert dispatch with trust-weighted confirmation thresholds.
+- [x] Make the alert system trustworthy enough that serious birders rely on it.
 
 ### Checklist
 
-- [ ] Implement `sightings`, `sighting_confirmations`, and `sighting_flags` tables.
-- [ ] Implement `user_species_alerts` and `user_location_alerts` tables.
-- [ ] Build sighting report API: GPS auto-fill, species search with MeiliSearch (sorted by frequency for location and month), optional photo/audio attachment, notes.
-- [ ] Implement rarity auto-classification based on eBird frequency data: common (>30%), uncommon (10-30%), rare (1-10%), mega_rare (<1%).
-- [ ] Implement confirmation threshold logic: common (no confirmation needed), uncommon (feed only), rare (2 confirmations within 1 mile and 24 hours), mega_rare (2 confirmations OR 1 from trusted/mod).
-- [ ] Implement trust-weighted thresholds: trusted reporters need only 1 additional confirmation; new users need 3 for rare+.
-- [ ] Implement confirmation submission flow: nearby users can confirm with optional photo evidence.
-- [ ] Build BullMQ alert dispatch job: fan out push notifications to users with matching species/location alerts within configured radius.
-- [ ] Publish confirmed sightings to Valkey pub/sub for real-time WebSocket feed broadcast.
-- [ ] Create in-app `notifications` table and notification delivery.
-- [ ] Implement anti-abuse escalation: 3 flagged reports raises threshold, 5 requires mod review, 10 auto-bans pending review.
+- [x] Implement `sightings`, `sighting_confirmations`, and `sighting_flags` tables.
+- [x] Implement `user_species_alerts` and `user_location_alerts` tables.
+- [x] Build sighting report API: GPS auto-fill, species search with MeiliSearch (sorted by frequency for location and month), optional photo/audio attachment, notes.
+- [x] Implement rarity auto-classification based on eBird frequency data: common (>30%), uncommon (10-30%), rare (1-10%), mega_rare (<1%).
+- [x] Implement confirmation threshold logic: common (no confirmation needed), uncommon (feed only), rare (2 confirmations within 1 mile and 24 hours), mega_rare (2 confirmations OR 1 from trusted/mod).
+- [x] Implement trust-weighted thresholds: trusted reporters need only 1 additional confirmation; new users need 3 for rare+.
+- [x] Implement confirmation submission flow: nearby users can confirm with optional photo evidence.
+- [x] Build BullMQ alert dispatch job: fan out push notifications to users with matching species/location alerts within configured radius.
+- [x] Publish confirmed sightings to Valkey pub/sub for real-time WebSocket feed broadcast.
+- [x] Create in-app `notifications` table and notification delivery.
+- [x] Implement anti-abuse escalation: 3 flagged reports raises threshold, 5 requires mod review, 10 auto-bans pending review.
 - [ ] Implement false report count decay (1 per quarter).
-- [ ] Implement sighting flagging and moderation resolution flow.
-- [ ] Add Sharp image processing via BullMQ for sighting photo uploads (thumbnail, WebP conversion, EXIF stripping).
-- [ ] Add Zod schemas for sighting, confirmation, flag, alert, and notification payloads.
+- [x] Implement sighting flagging and moderation resolution flow.
+- [x] Add Sharp image processing via BullMQ for sighting photo uploads (thumbnail, WebP conversion, EXIF stripping).
+- [x] Add Zod schemas for sighting, confirmation, flag, alert, and notification payloads.
 
 ### Exit criteria
 
-- [ ] A user can report a sighting in under 10 seconds with species autocomplete, GPS, and optional media.
-- [ ] Rarity classification is automatic and correct based on eBird frequency data.
-- [ ] Rare sightings trigger alerts only after confirmation thresholds are met.
-- [ ] Alert dispatch fans out push notifications and in-app notifications to matching subscribers.
-- [ ] Anti-abuse escalation works end to end.
-- [ ] Photo uploads are processed asynchronously with thumbnails and WebP variants.
+- [x] A user can report a sighting in under 10 seconds with species autocomplete, GPS, and optional media.
+- [x] Rarity classification is automatic and correct based on eBird frequency data.
+- [x] Rare sightings trigger alerts only after confirmation thresholds are met.
+- [x] Alert dispatch fans out push notifications and in-app notifications to matching subscribers.
+- [x] Anti-abuse escalation works end to end.
+- [x] Photo uploads are processed asynchronously with thumbnails and WebP variants.
 
 ### Verification
 
