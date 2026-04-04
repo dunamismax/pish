@@ -1,9 +1,8 @@
 ---
 import AppLayout from "../../layouts/AppLayout.astro";
+import DashboardView from "../../components/DashboardView.vue";
 ---
 
 <AppLayout title="Dashboard">
-	<div class="flex flex-col gap-6">
-		<p class="text-[var(--color-text-muted)]">Welcome to Pish. Your birding dashboard will live here.</p>
-	</div>
+	<DashboardView client:load />
 </AppLayout>

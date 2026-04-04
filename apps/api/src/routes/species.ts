@@ -151,4 +151,56 @@ export const speciesRoutes = new Elysia({ prefix: "/api/species" })
 				regionCode: t.String(),
 			}),
 		},
+	)
+
+	// ─── Likely Here Now ────────────────────────────────────────────
+	.get(
+		"/likely-here",
+		async ({ query }) => {
+			const { lat, lng, regionCode, limit } = query;
+			const month = new Date().getMonth() + 1;
+			const region = regionCode || "US";
+			const lim = limit || 20;
+
+			const rows = await sql`
+				SELECT
+					s.id, s.species_code, s.common_name, s.scientific_name,
+					s.family_common_name, sf.frequency, sf.sample_size
+				FROM species_frequency sf
+				JOIN species s ON s.id = sf.species_id
+				WHERE sf.region_code = ${region}
+				  AND sf.month = ${month}
+				  AND sf.frequency > 0
+				  AND s.category = 'species'
+				ORDER BY sf.frequency DESC
+				LIMIT ${lim}
+			`;
+
+			return {
+				ok: true,
+				data: rows.map((r) => ({
+					id: r.id,
+					speciesCode: r.species_code,
+					commonName: r.common_name,
+					scientificName: r.scientific_name,
+					familyCommonName: r.family_common_name,
+					frequency: Number(r.frequency),
+					sampleSize: r.sample_size ? Number(r.sample_size) : null,
+				})),
+				meta: {
+					month,
+					regionCode: region,
+					lat: Number(lat),
+					lng: Number(lng),
+				},
+			};
+		},
+		{
+			query: t.Object({
+				lat: t.Numeric({ minimum: -90, maximum: 90 }),
+				lng: t.Numeric({ minimum: -180, maximum: 180 }),
+				regionCode: t.Optional(t.String()),
+				limit: t.Optional(t.Numeric({ minimum: 1, maximum: 100, default: 20 })),
+			}),
+		},
 	);

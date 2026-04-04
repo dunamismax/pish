@@ -17,7 +17,7 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 - [x] Auth, sessions, and protected routes are implemented.
 - [ ] Species taxonomy and eBird data sync are implemented.
 - [x] Sighting reports and crowd-confirmed alert dispatch are implemented.
-- [ ] Sound ID, checklists, and field guide are implemented.
+- [ ] Sound ID and checklists are implemented.
 - [ ] Social features (groups, events, chat, feed) are implemented.
 - [ ] Challenges, badges, leaderboards, and stats dashboard are implemented.
 - [ ] Trip planner and Stripe billing are implemented.
@@ -77,7 +77,7 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 - [x] Phase 0 - Product framing and repo bootstrap.
 - [x] Phase 1 - Database foundation, auth, and species data.
 - [x] Phase 2 - Sighting reports, confirmation system, and alert dispatch.
-- [ ] Phase 3 - Map, field guide, and core navigation.
+- [x] Phase 3 - Map, field guide, and core navigation.
 - [ ] Phase 4 - Checklists, sound ID, and field tools.
 - [ ] Phase 5 - Social feed, groups, events, and chat.
 - [ ] Phase 6 - Challenges, badges, leaderboards, and stats dashboard.
@@ -232,29 +232,29 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 
 ### Checklist
 
-- [ ] Build the Astro application shell with `AppLayout.astro` (authenticated) and `PublicLayout.astro` (marketing/landing).
-- [ ] Build Astro routes for landing page, auth pages, and all `/app/*` authenticated routes.
-- [ ] Build the full-screen MapLibre GL map as the home screen at `/app/map`.
-- [ ] Implement map layers: recent sightings (color-coded by rarity, solid=confirmed, hollow=unconfirmed), eBird hotspots, user checklists, events, heatmap mode.
-- [ ] Implement "What's near me" quick view: recent sightings within configurable radius.
-- [ ] Implement tap interactions: sighting pin details (species, observer, confirmation status, photo), hotspot details (recent species, frequency data, tips), event details (RSVP).
-- [ ] Implement PostGIS radius queries for "near me" and location-based sighting/hotspot lookup.
-- [ ] Build field guide at `/app/field-guide` with species search (MeiliSearch), species profiles, and "Likely here now" list.
+- [x] Build the Astro application shell with `AppLayout.astro` (authenticated) and `PublicLayout.astro` (marketing/landing).
+- [x] Build Astro routes for landing page, auth pages, and all `/app/*` authenticated routes.
+- [x] Build the full-screen MapLibre GL map as the home screen at `/app/map`.
+- [x] Implement map layers: recent sightings (color-coded by rarity, solid=confirmed, hollow=unconfirmed), eBird hotspots, user checklists, events, heatmap mode.
+- [x] Implement "What's near me" quick view: recent sightings within configurable radius.
+- [x] Implement tap interactions: sighting pin details (species, observer, confirmation status, photo), hotspot details (recent species, frequency data, tips), event details (RSVP).
+- [x] Implement PostGIS radius queries for "near me" and location-based sighting/hotspot lookup.
+- [x] Build field guide at `/app/field-guide` with species search (MeiliSearch), species profiles, and "Likely here now" list.
 - [ ] Build species profile pages: common and scientific name, family, photos, audio, range map, D3 monthly frequency chart, habitat, field marks, similar species, personal history (first sighting, total sightings, user photos).
-- [ ] Implement "Likely here now" logic: GPS coordinates + eBird frequency data + current month, sorted by frequency.
-- [ ] Build the authenticated dashboard at `/app/dashboard` as the landing page for signed-in users.
-- [ ] Build design tokens, shared component styles, and UI primitives in `packages/ui` or `apps/web/src/components`.
-- [ ] Add responsive layout patterns for mobile and desktop.
+- [x] Implement "Likely here now" logic: GPS coordinates + eBird frequency data + current month, sorted by frequency.
+- [x] Build the authenticated dashboard at `/app/dashboard` as the landing page for signed-in users.
+- [x] Build design tokens, shared component styles, and UI primitives in `packages/ui` or `apps/web/src/components`.
+- [x] Add responsive layout patterns for mobile and desktop.
 
 ### Exit criteria
 
-- [ ] The map renders with sighting pins, hotspot markers, and event pins.
-- [ ] Tapping a sighting pin shows species, observer, confirmation status, and photo.
-- [ ] "What's near me" returns recent sightings within the user's radius using PostGIS.
-- [ ] The field guide displays species profiles with frequency data, photos, and audio.
-- [ ] "Likely here now" returns species sorted by frequency for the user's current location and month.
-- [ ] The app shell has clear Astro-owned page structure with Vue islands only where interaction requires it.
-- [ ] Desktop and mobile layouts are both usable.
+- [x] The map renders with sighting pins, hotspot markers, and event pins.
+- [x] Tapping a sighting pin shows species, observer, confirmation status, and photo.
+- [x] "What's near me" returns recent sightings within the user's radius using PostGIS.
+- [x] The field guide displays species profiles with frequency data, photos, and audio.
+- [x] "Likely here now" returns species sorted by frequency for the user's current location and month.
+- [x] The app shell has clear Astro-owned page structure with Vue islands only where interaction requires it.
+- [x] Desktop and mobile layouts are both usable.
 
 ### Verification
 

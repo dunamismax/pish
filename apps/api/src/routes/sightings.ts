@@ -27,6 +27,72 @@ function mapSighting(r: Record<string, unknown>) {
 export const sightingRoutes = new Elysia({ prefix: "/api/sightings" })
 	.use(sessionMiddleware)
 
+	// ─── Nearby Sightings (with species info) ───────────────────
+	.get(
+		"/nearby",
+		async ({ query }) => {
+			const { lat, lng, radiusKm, limit, status: statusFilter } = query;
+			const radiusMeters = (radiusKm ?? 25) * 1000;
+			const lim = limit ?? 20;
+
+			const conditions = [
+				`ST_DWithin(sg.location, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography, $3)`,
+			];
+			const params: unknown[] = [lng, lat, radiusMeters];
+
+			if (statusFilter) {
+				conditions.push(`sg.status = $${params.length + 1}`);
+				params.push(statusFilter);
+			}
+
+			const whereClause = conditions.join(" AND ");
+
+			const rows = await sql.unsafe(
+				`SELECT
+					sg.id, sg.user_id, sg.species_id, sg.lat, sg.lng,
+					sg.location_name, sg.notes, sg.rarity, sg.status,
+					sg.confirmation_count, sg.photo_urls, sg.audio_url,
+					sg.created_at, sg.updated_at,
+					sp.common_name, sp.scientific_name, sp.species_code,
+					u.username AS observer_username,
+					ST_Distance(
+						sg.location,
+						ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography
+					) AS distance_meters
+				FROM sightings sg
+				JOIN species sp ON sp.id = sg.species_id
+				LEFT JOIN users u ON u.id = sg.user_id
+				WHERE ${whereClause}
+				ORDER BY sg.created_at DESC
+				LIMIT $${params.length + 1}`,
+				[...params, lim] as never[],
+			);
+
+			return {
+				ok: true,
+				data: rows.map((r) => ({
+					...mapSighting(r),
+					species: {
+						commonName: r.common_name,
+						scientificName: r.scientific_name,
+						speciesCode: r.species_code,
+					},
+					observerUsername: r.observer_username ?? null,
+					distanceKm: Math.round((Number(r.distance_meters) / 1000) * 10) / 10,
+				})),
+			};
+		},
+		{
+			query: t.Object({
+				lat: t.Numeric({ minimum: -90, maximum: 90 }),
+				lng: t.Numeric({ minimum: -180, maximum: 180 }),
+				radiusKm: t.Optional(t.Numeric({ minimum: 0.1, maximum: 500, default: 25 })),
+				limit: t.Optional(t.Numeric({ minimum: 1, maximum: 100, default: 20 })),
+				status: t.Optional(t.Union([t.Literal("unconfirmed"), t.Literal("confirmed")])),
+			}),
+		},
+	)
+
 	// ─── Create Sighting ─────────────────────────────────────────
 	.post(
 		"/",

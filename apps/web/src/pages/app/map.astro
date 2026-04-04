@@ -1,9 +1,14 @@
 ---
 import AppLayout from "../../layouts/AppLayout.astro";
+import MapView from "../../components/MapView.vue";
 ---
 
-<AppLayout title="Map">
-	<div class="flex h-full items-center justify-center">
-		<p class="text-[var(--color-text-muted)]">MapLibre GL map will render here.</p>
+<AppLayout title="Map" fullScreen>
+	<div class="h-[calc(100vh-4rem)] md:h-screen">
+		<MapView client:load />
 	</div>
 </AppLayout>
+
+<style is:global>
+	@import "maplibre-gl/dist/maplibre-gl.css";
+</style>

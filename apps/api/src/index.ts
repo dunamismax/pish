@@ -7,6 +7,7 @@ import { Elysia } from "elysia";
 import { alertRoutes } from "./routes/alerts";
 import { authRoutes } from "./routes/auth";
 import { healthRoutes } from "./routes/health";
+import { hotspotRoutes } from "./routes/hotspots";
 import { notificationRoutes } from "./routes/notifications";
 import { sightingRoutes } from "./routes/sightings";
 import { speciesRoutes } from "./routes/species";
@@ -18,6 +19,7 @@ const app = new Elysia()
 	.use(authRoutes)
 	.use(speciesRoutes)
 	.use(sightingRoutes)
+	.use(hotspotRoutes)
 	.use(alertRoutes)
 	.use(notificationRoutes)
 	.listen(port);
