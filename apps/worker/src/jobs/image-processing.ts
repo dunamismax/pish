@@ -1,4 +1,5 @@
 import type { Job } from "bullmq";
+import { processImageFile, resolveJobPhotoPath } from "../lib/image-processing";
 
 interface ImageProcessingData {
 	sightingId: string;
@@ -10,9 +11,6 @@ interface ImageProcessingData {
  * - Generate thumbnails
  * - Convert to WebP
  * - Strip EXIF data for privacy
- *
- * Uses Sharp for image processing. In production, this would
- * read from object storage, process, and write back.
  */
 export async function processImages(job: Job): Promise<void> {
 	const data: ImageProcessingData = job.data;
@@ -21,13 +19,17 @@ export async function processImages(job: Job): Promise<void> {
 	);
 
 	for (const url of data.photoUrls) {
+		const photoPath = resolveJobPhotoPath(url);
+		if (!photoPath) {
+			console.warn(`[image-processing] skipping non-local image source: ${url}`);
+			continue;
+		}
+
 		try {
-			// In production:
-			// 1. Download original from object storage
-			// 2. Sharp: strip EXIF, resize to thumbnail (300x300), convert to WebP
-			// 3. Upload processed versions back to storage
-			// 4. Update sighting photo_urls with processed URLs
-			console.log(`[image-processing] processed: ${url}`);
+			const result = await processImageFile(photoPath);
+			console.log(
+				`[image-processing] processed: ${url} -> ${result.optimizedPath}, ${result.thumbnailPath}`,
+			);
 		} catch (err) {
 			console.error(`[image-processing] failed to process ${url}:`, err);
 		}

@@ -12,6 +12,17 @@ import { sql } from "./db";
  *
  * Falls back to "uncommon" when no frequency data is available.
  */
+export function classifyRarityFromFrequency(frequency?: number | null): SightingRarity {
+	if (frequency == null || Number.isNaN(frequency)) {
+		return "uncommon";
+	}
+
+	if (frequency > 0.3) return "common";
+	if (frequency >= 0.1) return "uncommon";
+	if (frequency >= 0.01) return "rare";
+	return "mega_rare";
+}
+
 export async function classifyRarity(
 	speciesId: string,
 	regionCode?: string,
@@ -28,14 +39,5 @@ export async function classifyRarity(
 		LIMIT 1
 	`;
 
-	if (rows.length === 0) {
-		return "uncommon";
-	}
-
-	const frequency = Number(rows[0].frequency);
-
-	if (frequency > 0.3) return "common";
-	if (frequency >= 0.1) return "uncommon";
-	if (frequency >= 0.01) return "rare";
-	return "mega_rare";
+	return classifyRarityFromFrequency(rows[0] ? Number(rows[0].frequency) : null);
 }

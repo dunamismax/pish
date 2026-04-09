@@ -1,9 +1,10 @@
 import { Elysia, t } from "elysia";
 import { evaluateConfirmation, getInitialStatus } from "../lib/confirmation";
 import { sql } from "../lib/db";
+import { determineModerationStatus, incrementFalseReportCount } from "../lib/false-reports";
 import { classifyRarity } from "../lib/rarity";
 import { valkey } from "../lib/valkey";
-import { sessionMiddleware } from "../middleware/auth";
+import { requireRole, sessionMiddleware } from "../middleware/auth";
 
 function mapSighting(r: Record<string, unknown>) {
 	return {
@@ -394,51 +395,45 @@ export const sightingRoutes = new Elysia({ prefix: "/api/sightings" })
 				return { ok: false, error: { code: "UNAUTHORIZED", message: "Authentication required" } };
 			}
 
-			// Get sighting
 			const sightingRows = await sql`
-				SELECT id, user_id, status FROM sightings WHERE id = ${params.id}
+				SELECT id, user_id FROM sightings WHERE id = ${params.id}
 			`;
 			if (sightingRows.length === 0) {
 				set.status = 404;
 				return { ok: false, error: { code: "NOT_FOUND", message: "Sighting not found" } };
 			}
 
-			// Insert flag
 			await sql`
 				INSERT INTO sighting_flags (sighting_id, user_id, reason)
 				VALUES (${params.id}, ${user.id}, ${body.reason})
 			`;
 
-			// Count unresolved flags for this sighting
 			const flagCountRows = await sql`
 				SELECT COUNT(*)::int AS cnt
 				FROM sighting_flags
 				WHERE sighting_id = ${params.id} AND NOT resolved
 			`;
-			const flagCount = flagCountRows[0].cnt;
+			const sightingFlagCount = Number(flagCountRows[0].cnt);
 
-			// Count total unresolved flags for the reporter
-			const reporterUserId = sightingRows[0].user_id;
-			const reporterFlagRows = await sql`
-				SELECT COUNT(*)::int AS cnt
-				FROM sighting_flags sf
-				JOIN sightings s ON s.id = sf.sighting_id
-				WHERE s.user_id = ${reporterUserId} AND NOT sf.resolved
-			`;
-			const reporterFlagCount = reporterFlagRows[0].cnt;
+			const reporterUserId = sightingRows[0].user_id as string;
+			const reporterFalseReportCount = await incrementFalseReportCount(reporterUserId);
+			const nextStatus = determineModerationStatus(sightingFlagCount, reporterFalseReportCount);
 
-			// Anti-abuse: auto-flag sighting at 3+, remove at 5+
-			if (flagCount >= 5 || reporterFlagCount >= 10) {
+			if (nextStatus !== "unconfirmed") {
 				await sql`
-					UPDATE sightings SET status = 'removed' WHERE id = ${params.id}
-				`;
-			} else if (flagCount >= 3 || reporterFlagCount >= 5) {
-				await sql`
-					UPDATE sightings SET status = 'flagged' WHERE id = ${params.id}
+					UPDATE sightings SET status = ${nextStatus} WHERE id = ${params.id}
 				`;
 			}
 
-			return { ok: true, data: { flagged: true } };
+			return {
+				ok: true,
+				data: {
+					flagged: true,
+					sightingFlagCount,
+					reporterFalseReportCount,
+					status: nextStatus,
+				},
+			};
 		},
 		{
 			params: t.Object({
@@ -446,6 +441,53 @@ export const sightingRoutes = new Elysia({ prefix: "/api/sightings" })
 			}),
 			body: t.Object({
 				reason: t.String({ minLength: 5, maxLength: 1000 }),
+			}),
+		},
+	)
+	.use(requireRole("regional_mod", "admin", "god"))
+	.patch(
+		"/:id/flags/:flagId/resolve",
+		async ({ params, body, user, set }) => {
+			const rows = await sql`
+				UPDATE sighting_flags
+				SET resolved = TRUE,
+					resolved_by = ${user?.id ?? null},
+					resolved_at = NOW()
+				WHERE id = ${params.flagId}
+				  AND sighting_id = ${params.id}
+				  AND NOT resolved
+				RETURNING id
+			`;
+
+			if (rows.length === 0) {
+				set.status = 404;
+				return { ok: false, error: { code: "NOT_FOUND", message: "Flag not found" } };
+			}
+
+			const unresolvedRows = await sql`
+				SELECT COUNT(*)::int AS cnt
+				FROM sighting_flags
+				WHERE sighting_id = ${params.id} AND NOT resolved
+			`;
+			const remainingUnresolvedFlags = Number(unresolvedRows[0].cnt);
+
+			if (body.restoreStatus && remainingUnresolvedFlags < 3) {
+				await sql`
+					UPDATE sightings
+					SET status = CASE WHEN rarity = 'common' THEN 'confirmed' ELSE 'unconfirmed' END
+					WHERE id = ${params.id}
+				`;
+			}
+
+			return { ok: true, data: { resolved: true, remainingUnresolvedFlags } };
+		},
+		{
+			params: t.Object({
+				id: t.String({ format: "uuid" }),
+				flagId: t.String({ format: "uuid" }),
+			}),
+			body: t.Object({
+				restoreStatus: t.Optional(t.Boolean()),
 			}),
 		},
 	);

@@ -76,7 +76,7 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 
 - [x] Phase 0 - Product framing and repo bootstrap.
 - [x] Phase 1 - Database foundation, auth, and species data.
-- [x] Phase 2 - Sighting reports, confirmation system, and alert dispatch.
+- [ ] Phase 2 - Sighting reports, confirmation system, and alert dispatch.
 - [x] Phase 3 - Map, field guide, and core navigation.
 - [ ] Phase 4 - Checklists, sound ID, and field tools.
 - [ ] Phase 5 - Social feed, groups, events, and chat.
@@ -199,7 +199,7 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 - [x] Publish confirmed sightings to Valkey pub/sub for real-time WebSocket feed broadcast.
 - [x] Create in-app `notifications` table and notification delivery.
 - [x] Implement anti-abuse escalation: 3 flagged reports raises threshold, 5 requires mod review, 10 auto-bans pending review.
-- [ ] Implement false report count decay (1 per quarter).
+- [x] Implement false report count decay (1 per quarter).
 - [x] Implement sighting flagging and moderation resolution flow.
 - [x] Add Sharp image processing via BullMQ for sighting photo uploads (thumbnail, WebP conversion, EXIF stripping).
 - [x] Add Zod schemas for sighting, confirmation, flag, alert, and notification payloads.
@@ -218,8 +218,8 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 - [ ] Integration tests for sighting creation, rarity classification, and confirmation threshold logic.
 - [ ] Integration tests for alert dispatch fan-out against various alert subscription configurations.
 - [ ] Integration tests for trust-weighted confirmation thresholds (trusted reporter, new user, standard user).
-- [ ] Anti-abuse escalation tests for flagged report counts and consequences.
-- [ ] Image processing pipeline tests for thumbnail generation and format conversion.
+- [x] Anti-abuse escalation tests for flagged report counts and consequences.
+- [x] Image processing pipeline tests for thumbnail generation and format conversion.
 - [ ] Playwright coverage for sighting report flow, confirmation flow, and notification delivery.
 
 ## Phase 3 - Map, field guide, and core navigation

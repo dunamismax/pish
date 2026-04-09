@@ -1,5 +1,6 @@
 import type { SightingRarity, SightingStatus } from "@pish/contracts";
 import { sql } from "./db";
+import { getEffectiveFalseReportCount } from "./false-reports";
 
 /** Rarity enum ordering for threshold comparison */
 const RARITY_ORDER: Record<SightingRarity, number> = {
@@ -18,104 +19,96 @@ interface ConfirmationContext {
 	confirmingUserRole: string;
 }
 
-/**
- * Get the number of unresolved flags for a user.
- */
-async function getUserFlagCount(userId: string): Promise<number> {
-	const rows = await sql`
-		SELECT COUNT(*)::int AS cnt
-		FROM sighting_flags sf
-		JOIN sightings s ON s.id = sf.sighting_id
-		WHERE s.user_id = ${userId} AND NOT sf.resolved
-	`;
-	return rows[0]?.cnt ?? 0;
+export interface ConfirmationThresholdInput {
+	rarity: SightingRarity;
+	reporterRole: string;
+	falseReportCount: number;
 }
 
-/**
- * Determine required confirmation count based on rarity, reporter reputation, and flags.
- *
- * - common: auto-confirmed (0 needed)
- * - uncommon: 0 needed (feed only, no alert dispatch)
- * - rare: 2 confirmations (3 for new users, 1 additional for trusted)
- * - mega_rare: 2 confirmations OR 1 from trusted/mod
- *
- * Anti-abuse adjustments:
- * - 3+ flags: threshold raised by 1
- * - 5+ flags: requires mod review (threshold set very high)
- */
-async function getRequiredConfirmations(
-	rarity: SightingRarity,
-	reporterRole: string,
-	reporterUserId: string,
-): Promise<number> {
+export function calculateRequiredConfirmations({
+	rarity,
+	reporterRole,
+	falseReportCount,
+}: ConfirmationThresholdInput): number {
 	if (rarity === "common") return 0;
 	if (rarity === "uncommon") return 0;
-
-	const flagCount = await getUserFlagCount(reporterUserId);
-
-	// 5+ flags: requires mod review
-	if (flagCount >= 5) return 999;
+	if (falseReportCount >= 5) return 999;
 
 	const isNewUser = reporterRole === "new_user";
 	const isTrusted = ["trusted", "regional_mod", "admin", "god"].includes(reporterRole);
 
-	let required: number;
-	if (rarity === "mega_rare") {
-		required = isTrusted ? 1 : isNewUser ? 3 : 2;
-	} else {
-		// rare
-		required = isTrusted ? 1 : isNewUser ? 3 : 2;
-	}
+	let required = isTrusted ? 1 : isNewUser ? 3 : 2;
 
-	// 3+ flags raises threshold
-	if (flagCount >= 3) {
+	if (falseReportCount >= 3) {
 		required += 1;
 	}
 
 	return required;
 }
 
-/**
- * Evaluate whether a sighting should be confirmed after a new confirmation
- * is added. Returns the new status.
- */
-export async function evaluateConfirmation(ctx: ConfirmationContext): Promise<SightingStatus> {
-	const required = await getRequiredConfirmations(ctx.rarity, ctx.reporterRole, ctx.reporterUserId);
-
-	// mega_rare: 1 confirmation from trusted/mod user is enough
-	if (ctx.rarity === "mega_rare") {
+export function determineConfirmationStatus({
+	rarity,
+	currentConfirmationCount,
+	requiredConfirmations,
+	confirmingUserRole,
+}: {
+	rarity: SightingRarity;
+	currentConfirmationCount: number;
+	requiredConfirmations: number;
+	confirmingUserRole: string;
+}): SightingStatus {
+	if (rarity === "mega_rare") {
 		const isTrustedConfirmer = ["trusted", "regional_mod", "admin", "god"].includes(
-			ctx.confirmingUserRole,
+			confirmingUserRole,
 		);
 		if (isTrustedConfirmer) {
 			return "confirmed";
 		}
 	}
 
-	if (ctx.currentConfirmationCount >= required) {
+	if (currentConfirmationCount >= requiredConfirmations) {
 		return "confirmed";
 	}
 
 	return "unconfirmed";
 }
 
-/**
- * Determine initial status for a new sighting.
- */
+export function determineInitialStatus(
+	rarity: SightingRarity,
+	falseReportCount: number,
+): SightingStatus {
+	if (rarity === "common") return "confirmed";
+	if (falseReportCount >= 10) return "removed";
+	if (falseReportCount >= 5) return "flagged";
+	return "unconfirmed";
+}
+
+async function getRequiredConfirmations(
+	rarity: SightingRarity,
+	reporterRole: string,
+	reporterUserId: string,
+): Promise<number> {
+	const falseReportCount = await getEffectiveFalseReportCount(reporterUserId);
+	return calculateRequiredConfirmations({ rarity, reporterRole, falseReportCount });
+}
+
+export async function evaluateConfirmation(ctx: ConfirmationContext): Promise<SightingStatus> {
+	const required = await getRequiredConfirmations(ctx.rarity, ctx.reporterRole, ctx.reporterUserId);
+	return determineConfirmationStatus({
+		rarity: ctx.rarity,
+		currentConfirmationCount: ctx.currentConfirmationCount,
+		requiredConfirmations: required,
+		confirmingUserRole: ctx.confirmingUserRole,
+	});
+}
+
 export async function getInitialStatus(
 	rarity: SightingRarity,
 	_reporterRole: string,
 	reporterUserId: string,
 ): Promise<SightingStatus> {
-	if (rarity === "common") return "confirmed";
-
-	const flagCount = await getUserFlagCount(reporterUserId);
-	// 10+ flags: auto-ban pending review
-	if (flagCount >= 10) return "removed";
-	// 5+ flags: requires mod review
-	if (flagCount >= 5) return "flagged";
-
-	return "unconfirmed";
+	const falseReportCount = await getEffectiveFalseReportCount(reporterUserId);
+	return determineInitialStatus(rarity, falseReportCount);
 }
 
 /**
@@ -127,7 +120,6 @@ export async function isValidConfirmation(
 	_confirmingLat?: number,
 	_confirmingLng?: number,
 ): Promise<boolean> {
-	// For now, check the sighting exists and is within 24 hours
 	const rows = await sql`
 		SELECT created_at FROM sightings
 		WHERE id = ${sightingId}
@@ -136,9 +128,6 @@ export async function isValidConfirmation(
 	return rows.length > 0;
 }
 
-/**
- * Check if a rarity meets a minimum threshold.
- */
 export function meetsRarityThreshold(actual: SightingRarity, minimum: SightingRarity): boolean {
 	return RARITY_ORDER[actual] >= RARITY_ORDER[minimum];
 }
