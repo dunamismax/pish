@@ -215,9 +215,9 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 
 ### Verification
 
-- [ ] Integration tests for sighting creation, rarity classification, and confirmation threshold logic.
-- [ ] Integration tests for alert dispatch fan-out against various alert subscription configurations.
-- [ ] Integration tests for trust-weighted confirmation thresholds (trusted reporter, new user, standard user).
+- [x] Integration tests for sighting creation, rarity classification, and confirmation threshold logic.
+- [x] Integration tests for alert dispatch fan-out against various alert subscription configurations.
+- [x] Integration tests for trust-weighted confirmation thresholds (trusted reporter, new user, standard user).
 - [x] Anti-abuse escalation tests for flagged report counts and consequences.
 - [x] Image processing pipeline tests for thumbnail generation and format conversion.
 - [ ] Playwright coverage for sighting report flow, confirmation flow, and notification delivery.

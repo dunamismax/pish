@@ -23,7 +23,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-      - PUBLIC_API_URL=http://localhost:3001
+      - API_URL=http://api:3001
     depends_on:
       api:
         condition: service_started
@@ -38,6 +38,7 @@ services:
     environment:
       - NODE_ENV=development
       - API_PORT=3001
+      - BASE_URL=http://localhost
       - DATABASE_URL=postgres://pish:pish@postgres:5432/pish
       - VALKEY_URL=redis://valkey:6379
       - MEILISEARCH_URL=http://meilisearch:7700
@@ -69,7 +70,9 @@ services:
     restart: unless-stopped
 
   postgres:
-    image: postgis/postgis:17-3.5-alpine
+    build:
+      context: .
+      dockerfile: ops/docker/Dockerfile.postgres
     ports:
       - "5432:5432"
     environment:

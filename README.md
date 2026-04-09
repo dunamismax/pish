@@ -18,7 +18,9 @@ bun run db:migrate
 bun run dev
 ```
 
-The web frontend runs at `http://localhost:3000`, the API at `http://localhost:3001`.
+Direct service ports are `http://localhost:3000` for the web app and `http://localhost:3001` for the API.
+
+The canonical integrated local entrypoint is Caddy at `http://localhost`.
 
 To run the full stack behind Caddy (matching production routing):
 

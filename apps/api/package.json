@@ -14,6 +14,7 @@
 		"@pish/contracts": "workspace:*",
 		"@pish/email": "workspace:*",
 		"@sentry/bun": "^10.47.0",
+		"@sinclair/typebox": "^0.34.49",
 		"arctic": "^3.7.0",
 		"elysia": "^1.2",
 		"ioredis": "^5.10.1",

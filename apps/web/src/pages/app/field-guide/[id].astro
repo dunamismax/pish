@@ -5,7 +5,7 @@ import FrequencyChart from "../../../components/FrequencyChart.vue";
 const { id } = Astro.params;
 
 // Fetch species data server-side
-const apiBase = import.meta.env.API_URL || "http://localhost:3001";
+const apiBase = process.env.API_URL ?? import.meta.env.API_URL ?? "http://localhost:3001";
 let species: Record<string, unknown> | null = null;
 
 try {
