@@ -1,0 +1,46 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+	title: string;
+	description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+	<header class="border-b border-(--color-border) bg-(--color-bg)/80 backdrop-blur-sm sticky top-0 z-40">
+		<nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
+			<a href="/" class="flex items-center gap-2 text-xl font-bold text-primary-600">
+				<svg class="h-7 w-7" viewBox="0 0 24 24" fill="currentColor">
+					<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+				</svg>
+				Pish
+			</a>
+			<div class="flex items-center gap-3 sm:gap-4">
+				<a href="/signin" class="text-sm text-(--color-text-muted) hover:text-(--color-text) transition-colors">
+					Sign in
+				</a>
+				<a href="/signup" class="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors">
+					Get started
+				</a>
+			</div>
+		</nav>
+	</header>
+	<main>
+		<slot />
+	</main>
+	<footer class="border-t border-(--color-border) bg-(--color-bg-alt)">
+		<div class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+			<div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+				<p class="text-sm text-(--color-text-muted)">&copy; {new Date().getFullYear()} Pish. All rights reserved.</p>
+				<div class="flex gap-6">
+					<a href="/about" class="text-sm text-(--color-text-muted) hover:text-(--color-text)">About</a>
+					<a href="/privacy" class="text-sm text-(--color-text-muted) hover:text-(--color-text)">Privacy</a>
+					<a href="/terms" class="text-sm text-(--color-text-muted) hover:text-(--color-text)">Terms</a>
+				</div>
+			</div>
+		</div>
+	</footer>
+</BaseLayout>
