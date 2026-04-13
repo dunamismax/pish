@@ -153,6 +153,185 @@ export const speciesRoutes = new Elysia({ prefix: "/api/species" })
 		},
 	)
 
+	// ─── Species Profile (enriched data for profile page) ──────────
+	.get(
+		"/:id/profile",
+		async ({ params, user }) => {
+			const speciesId = params.id;
+
+			// Fetch base species data
+			const speciesRows = await sql`
+				SELECT id, species_code, common_name, scientific_name,
+					   family_common_name, family_scientific_name,
+					   taxonomic_order, category, taxon_order
+				FROM species
+				WHERE id = ${speciesId}
+			`;
+
+			if (speciesRows.length === 0) {
+				return { ok: false, error: { code: "NOT_FOUND", message: "Species not found" } };
+			}
+
+			const s = speciesRows[0];
+
+			// Community photos: recent sightings with photos for this species
+			const photoRows = await sql`
+				SELECT sg.id AS sighting_id, sg.photo_urls, sg.lat, sg.lng,
+					   sg.location_name, sg.created_at,
+					   u.username AS observer_username
+				FROM sightings sg
+				LEFT JOIN users u ON u.id = sg.user_id
+				WHERE sg.species_id = ${speciesId}
+				  AND sg.status IN ('confirmed', 'unconfirmed')
+				  AND sg.photo_urls IS NOT NULL
+				  AND sg.photo_urls != '[]'::jsonb
+				ORDER BY sg.created_at DESC
+				LIMIT 12
+			`;
+
+			const communityPhotos = photoRows.map((r) => ({
+				sightingId: r.sighting_id,
+				photoUrls: r.photo_urls as string[],
+				lat: Number(r.lat),
+				lng: Number(r.lng),
+				locationName: r.location_name ?? null,
+				observerUsername: r.observer_username ?? null,
+				createdAt: (r.created_at as Date).toISOString(),
+			}));
+
+			// Community audio: recent sightings with audio
+			const audioRows = await sql`
+				SELECT sg.id AS sighting_id, sg.audio_url, sg.lat, sg.lng,
+					   sg.location_name, sg.created_at,
+					   u.username AS observer_username
+				FROM sightings sg
+				LEFT JOIN users u ON u.id = sg.user_id
+				WHERE sg.species_id = ${speciesId}
+				  AND sg.status IN ('confirmed', 'unconfirmed')
+				  AND sg.audio_url IS NOT NULL
+				ORDER BY sg.created_at DESC
+				LIMIT 6
+			`;
+
+			const communityAudio = audioRows.map((r) => ({
+				sightingId: r.sighting_id,
+				audioUrl: r.audio_url as string,
+				lat: Number(r.lat),
+				lng: Number(r.lng),
+				locationName: r.location_name ?? null,
+				observerUsername: r.observer_username ?? null,
+				createdAt: (r.created_at as Date).toISOString(),
+			}));
+
+			// Similar species: same family, exclude self, limited to actual species
+			const similarRows = await sql`
+				SELECT id, species_code, common_name, scientific_name
+				FROM species
+				WHERE family_scientific_name = ${s.family_scientific_name}
+				  AND id != ${speciesId}
+				  AND category = 'species'
+				ORDER BY taxon_order ASC
+				LIMIT 12
+			`;
+
+			const similarSpecies = similarRows.map((r) => ({
+				id: r.id,
+				speciesCode: r.species_code,
+				commonName: r.common_name,
+				scientificName: r.scientific_name,
+			}));
+
+			// Recent sighting locations for mini range map
+			const sightingLocationRows = await sql`
+				SELECT lat, lng, rarity, status, created_at
+				FROM sightings
+				WHERE species_id = ${speciesId}
+				  AND status IN ('confirmed', 'unconfirmed')
+				ORDER BY created_at DESC
+				LIMIT 100
+			`;
+
+			const sightingLocations = sightingLocationRows.map((r) => ({
+				lat: Number(r.lat),
+				lng: Number(r.lng),
+				rarity: r.rarity as string,
+				status: r.status as string,
+				createdAt: (r.created_at as Date).toISOString(),
+			}));
+
+			// Total sighting count for this species
+			const countRows = await sql`
+				SELECT COUNT(*)::int AS total
+				FROM sightings
+				WHERE species_id = ${speciesId}
+				  AND status IN ('confirmed', 'unconfirmed')
+			`;
+			const totalSightings = countRows[0].total;
+
+			// Personal history (only if authenticated)
+			let personalHistory = null;
+			if (user) {
+				const userSightingRows = await sql`
+					SELECT id, lat, lng, location_name, photo_urls, audio_url,
+						   rarity, status, created_at
+					FROM sightings
+					WHERE species_id = ${speciesId}
+					  AND user_id = ${user.id}
+					ORDER BY created_at ASC
+				`;
+
+				if (userSightingRows.length > 0) {
+					const first = userSightingRows[0];
+					const userPhotos: string[] = [];
+					for (const row of userSightingRows) {
+						const urls = row.photo_urls as string[] | null;
+						if (urls && Array.isArray(urls)) {
+							userPhotos.push(...urls);
+						}
+					}
+
+					personalHistory = {
+						totalSightings: userSightingRows.length,
+						firstSighting: {
+							id: first.id,
+							locationName: first.location_name ?? null,
+							createdAt: (first.created_at as Date).toISOString(),
+						},
+						userPhotos: userPhotos.slice(0, 20),
+					};
+				}
+			}
+
+			return {
+				ok: true,
+				data: {
+					species: {
+						id: s.id,
+						speciesCode: s.species_code,
+						commonName: s.common_name,
+						scientificName: s.scientific_name,
+						familyCommonName: s.family_common_name,
+						familyScientificName: s.family_scientific_name,
+						order: s.taxonomic_order,
+						category: s.category,
+						taxonOrder: s.taxon_order,
+					},
+					communityPhotos,
+					communityAudio,
+					similarSpecies,
+					sightingLocations,
+					totalSightings,
+					personalHistory,
+				},
+			};
+		},
+		{
+			params: t.Object({
+				id: t.String({ format: "uuid" }),
+			}),
+		},
+	)
+
 	// ─── Likely Here Now ────────────────────────────────────────────
 	.get(
 		"/likely-here",

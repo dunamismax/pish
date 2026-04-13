@@ -15,7 +15,7 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 - [x] Shared Zod contracts live in `packages/contracts`.
 - [x] The local developer entrypoint is `bun run dev`.
 - [x] Auth, sessions, and protected routes are implemented.
-- [ ] Species taxonomy and eBird data sync are implemented.
+- [x] Species taxonomy and eBird data sync are implemented.
 - [x] Sighting reports and crowd-confirmed alert dispatch are implemented.
 - [ ] Sound ID and checklists are implemented.
 - [ ] Social features (groups, events, chat, feed) are implemented.
@@ -76,7 +76,7 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 
 - [x] Phase 0 - Product framing and repo bootstrap.
 - [x] Phase 1 - Database foundation, auth, and species data.
-- [ ] Phase 2 - Sighting reports, confirmation system, and alert dispatch.
+- [x] Phase 2 - Sighting reports, confirmation system, and alert dispatch.
 - [x] Phase 3 - Map, field guide, and core navigation.
 - [ ] Phase 4 - Checklists, sound ID, and field tools.
 - [ ] Phase 5 - Social feed, groups, events, and chat.
@@ -226,9 +226,9 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 
 ### Objectives
 
-- [ ] Build the map as the primary navigation surface. Every other feature connects back to the map.
-- [ ] Build the field guide as a built-in species reference that birders actually use in the field.
-- [ ] Establish the Astro page structure and Vue island boundaries for the authenticated app shell.
+- [x] Build the map as the primary navigation surface. Every other feature connects back to the map.
+- [x] Build the field guide as a built-in species reference that birders actually use in the field.
+- [x] Establish the Astro page structure and Vue island boundaries for the authenticated app shell.
 
 ### Checklist
 
@@ -240,7 +240,7 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 - [x] Implement tap interactions: sighting pin details (species, observer, confirmation status, photo), hotspot details (recent species, frequency data, tips), event details (RSVP).
 - [x] Implement PostGIS radius queries for "near me" and location-based sighting/hotspot lookup.
 - [x] Build field guide at `/app/field-guide` with species search (MeiliSearch), species profiles, and "Likely here now" list.
-- [ ] Build species profile pages: common and scientific name, family, photos, audio, range map, D3 monthly frequency chart, habitat, field marks, similar species, personal history (first sighting, total sightings, user photos).
+- [x] Build species profile pages: common and scientific name, family, photos, audio, range map, D3 monthly frequency chart, habitat, field marks, similar species, personal history (first sighting, total sightings, user photos).
 - [x] Implement "Likely here now" logic: GPS coordinates + eBird frequency data + current month, sorted by frequency.
 - [x] Build the authenticated dashboard at `/app/dashboard` as the landing page for signed-in users.
 - [x] Build design tokens, shared component styles, and UI primitives in `packages/ui` or `apps/web/src/components`.
@@ -263,7 +263,7 @@ Pish is the all-in-one birding platform that replaces five apps with one. It com
 - [ ] D3 frequency chart rendering tests.
 - [ ] Playwright coverage for map interactions, field guide browsing, and species profile navigation.
 - [ ] Responsive layout checks at mobile and desktop breakpoints.
-- [ ] `astro check` passes for all routes.
+- [x] `astro check` passes for all routes.
 
 ## Phase 4 - Checklists, sound ID, and field tools
 
